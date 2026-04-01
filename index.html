@@ -1,0 +1,479 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis del Mercado Laboral: Valladolid</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F9F7F3;
+            color: #2C3E50;
+        }
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 450px;
+        }
+        
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-link {
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #D4A373;
+            transform: translateY(-2px);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-[#D4A373] selection:text-white">
+
+    <!-- Chosen Palette: Warm Neutrals (Off-white background #F9F7F3, Dark Slate text #2C3E50, Warm Camel accent #D4A373, Soft Sage secondary #E9EDC9) -->
+    
+    <!-- Application Structure Plan: The SPA is structured as a linear narrative dashboard. It starts with a fixed navigation header for quick jumping. Section 1 introduces the context. Section 2 and 3 present the raw data requested (Top 10 In-Demand and Top 10 Best Paid) using interactive lists and Chart.js graphs for visual ranking. Section 4 synthesizes this into the "Sweet Spot" (Top 5 combining both) using a visual scatter plot to emphasize the intersection of variables. Section 5 concludes with actionable intelligence: the Top 2 fast-track careers, presented as detailed cards with step-by-step learning paths. This structure moves the user from general market data to specific, actionable personal career advice. -->
+
+    <!-- Visualization & Content Choices: 
+    1. Top 10 Demand: Bar Chart (Chart.js) -> Goal: Compare volume -> Interaction: Hover for exact index -> Justification: Bar charts are best for ranking quantities.
+    2. Top 10 Paid: Horizontal Bar Chart (Chart.js) -> Goal: Compare salary ranges -> Interaction: Hover for exact values -> Justification: Horizontal bars accommodate long job titles better while showing magnitude.
+    3. Top 5 Combined: Scatter Plot (Chart.js) -> Goal: Show relationship between Salary and Demand -> Interaction: Tooltips with details -> Justification: Scatter plots perfectly visualize the intersection of two metrics to find the "sweet spot".
+    4. Top 2 Fast-Track: Interactive Info Cards (HTML/Tailwind) -> Goal: Provide actionable learning paths -> Interaction: Clickable tabs/buttons to reveal syllabus -> Justification: Text-heavy actionable advice is better suited for structured UI cards than charts.
+    -->
+
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <nav class="fixed top-0 w-full z-50 glass-panel border-b border-gray-200">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex-shrink-0 font-bold text-xl tracking-tight text-[#2C3E50]">
+                    Valladolid <span class="text-[#D4A373]">Laboral</span>
+                </div>
+                <div class="hidden md:flex space-x-8 text-sm font-semibold text-gray-600">
+                    <a href="#intro" class="nav-link">Inicio</a>
+                    <a href="#demandados" class="nav-link">Más Demandados</a>
+                    <a href="#pagados" class="nav-link">Mejor Pagados</a>
+                    <a href="#combinados" class="nav-link">El Punto Óptimo</a>
+                    <a href="#via-rapida" class="nav-link">Vía Rápida (6-12m)</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-24 pb-16">
+        
+        <section id="intro" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-20 text-center">
+            <div class="mt-10">
+                <span class="text-5xl mb-4 block">📍</span>
+                <h1 class="text-4xl md:text-5xl font-bold mb-6 text-[#2C3E50]">Radiografía Laboral de Valladolid</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                    Valladolid combina una sólida tradición industrial (especialmente en automoción y agroalimentación) con un ecosistema tecnológico y de servicios en plena expansión. Este panel interactivo desglosa las profesiones más buscadas, las mejor remuneradas y las oportunidades formativas de alto impacto para adaptar tu carrera a la demanda actual de la provincia.
+                </p>
+            </div>
+        </section>
+
+        <section id="demandados" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-24">
+            <div class="glass-panel rounded-2xl p-8">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold mb-4 flex items-center">
+                        <span class="text-3xl mr-3">📈</span> Los 10 Perfiles Más Demandados
+                    </h2>
+                    <p class="text-gray-600">
+                        Esta sección muestra las profesiones con mayor volumen de ofertas de empleo activas en Valladolid. Refleja la fuerte necesidad de mano de obra en la industria local, el sector logístico, la salud y la creciente digitalización de las empresas.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div class="w-full">
+                        <div class="chart-container">
+                            <canvas id="chartDemandados"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <ul class="space-y-3" id="lista-demandados">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="pagados" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-24">
+            <div class="glass-panel rounded-2xl p-8 bg-gradient-to-br from-white to-[#F9F7F3]">
+                <div class="mb-8 text-right">
+                    <h2 class="text-3xl font-bold mb-4 flex items-center justify-end">
+                        Los 10 Perfiles Mejor Pagados <span class="text-3xl ml-3">💰</span>
+                    </h2>
+                    <p class="text-gray-600 max-w-2xl ml-auto">
+                        Aquí exploramos las posiciones con las bandas salariales más altas en la provincia. Estos roles suelen requerir años de experiencia, alta especialización técnica, responsabilidades directivas o conocimientos críticos para la estrategia empresarial.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center flex-row-reverse">
+                    <div class="order-2 lg:order-1">
+                        <ul class="space-y-3" id="lista-pagados">
+                        </ul>
+                    </div>
+
+                    <div class="order-1 lg:order-2 w-full">
+                        <div class="chart-container">
+                            <canvas id="chartPagados"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="combinados" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-24">
+            <div class="glass-panel rounded-2xl p-8 border-l-4 border-[#D4A373]">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold mb-4 flex items-center">
+                        <span class="text-3xl mr-3">🎯</span> El Punto Óptimo: Top 5 Combinados
+                    </h2>
+                    <p class="text-gray-600">
+                        Cruzando los datos de alta empleabilidad y excelente remuneración, obtenemos los perfiles más estratégicos de Valladolid. Estos 5 trabajos representan el equilibrio perfecto: empresas compitiendo por talento y dispuestas a ofrecer salarios muy por encima de la media local.
+                    </p>
+                </div>
+
+                <div class="w-full mb-10">
+                    <div class="chart-container" style="height: 400px; max-width: 900px;">
+                        <canvas id="chartCombinados"></canvas>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4" id="tarjetas-combinados">
+                </div>
+            </div>
+        </section>
+
+        <section id="via-rapida" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+            <div class="text-center mb-12">
+                <span class="text-4xl mb-4 block">🚀</span>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Vía Rápida: Transición en 6 a 12 Meses</h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                    De la lista anterior, estos 2 perfiles destacan porque no requieren una carrera universitaria de 4 años para conseguir un empleo de entrada (Junior) bien remunerado. Mediante Bootcamps intensivos, certificaciones o FP de grado superior, puedes pivotar tu carrera en menos de un año.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <div class="glass-panel rounded-2xl overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                    <div class="bg-[#2C3E50] p-6 text-white relative">
+                        <div class="absolute top-4 right-4 bg-[#D4A373] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                            Perfil 1
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">Desarrollador Web Frontend / Fullstack</h3>
+                        <p class="text-gray-300 font-medium">Bootcamp Intensivo: 6 - 9 meses</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-6 pb-6 border-b border-gray-100">
+                            <div class="text-center">
+                                <p class="text-sm text-gray-500 uppercase tracking-wide">Salario Entry</p>
+                                <p class="text-xl font-bold text-[#D4A373]">18.000€ - 24.000€</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-sm text-gray-500 uppercase tracking-wide">Demanda</p>
+                                <p class="text-xl font-bold text-[#2C3E50]">Muy Alta</p>
+                            </div>
+                        </div>
+                        
+                        <h4 class="font-bold mb-3 text-lg">Hoja de Ruta (Cómo aprenderlo)</h4>
+                        <ul class="space-y-3 mb-6 text-gray-600">
+                            <li class="flex items-start">
+                                <span class="mr-2 mt-1">🔹</span>
+                                <span><strong>Mes 1-2:</strong> Fundamentos (HTML5, CSS3, JavaScript Básico).</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="mr-2 mt-1">🔹</span>
+                                <span><strong>Mes 3-5:</strong> Frameworks Modernos (React, Angular o Vue.js), control de versiones (Git).</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="mr-2 mt-1">🔹</span>
+                                <span><strong>Mes 6:</strong> Creación de un portfolio con 3-4 proyectos reales. Preparación de entrevistas técnicas.</span>
+                            </li>
+                        </ul>
+
+                        <div class="bg-[#E9EDC9] bg-opacity-40 p-4 rounded-lg">
+                            <p class="text-sm text-[#2C3E50]"><strong>Tip Local:</strong> Muchas consultoras tecnológicas y startups en el Parque Tecnológico de Boecillo buscan perfiles junior formados en bootcamps para moldearlos.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-2xl overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                    <div class="bg-[#D4A373] p-6 text-white relative">
+                        <div class="absolute top-4 right-4 bg-[#2C3E50] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                            Perfil 2
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">Analista de Datos (Data Analyst)</h3>
+                        <p class="text-gray-100 font-medium">Bootcamp / Certificaciones: 6 - 12 meses</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-6 pb-6 border-b border-gray-100">
+                            <div class="text-center">
+                                <p class="text-sm text-gray-500 uppercase tracking-wide">Salario Entry</p>
+                                <p class="text-xl font-bold text-[#D4A373]">20.000€ - 26.000€</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-sm text-gray-500 uppercase tracking-wide">Demanda</p>
+                                <p class="text-xl font-bold text-[#2C3E50]">Creciente</p>
+                            </div>
+                        </div>
+                        
+                        <h4 class="font-bold mb-3 text-lg">Hoja de Ruta (Cómo aprenderlo)</h4>
+                        <ul class="space-y-3 mb-6 text-gray-600">
+                            <li class="flex items-start">
+                                <span class="mr-2 mt-1">🔹</span>
+                                <span><strong>Mes 1-3:</strong> Dominio absoluto de Excel avanzado y bases de datos relacionales (SQL).</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="mr-2 mt-1">🔹</span>
+                                <span><strong>Mes 4-7:</strong> Herramientas de visualización (Power BI o Tableau) y fundamentos de Python/R para análisis.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="mr-2 mt-1">🔹</span>
+                                <span><strong>Mes 8-9:</strong> Proyectos prácticos: limpieza de datos, creación de dashboards interactivos para toma de decisiones.</span>
+                            </li>
+                        </ul>
+
+                        <div class="bg-[#E9EDC9] bg-opacity-40 p-4 rounded-lg">
+                            <p class="text-sm text-[#2C3E50]"><strong>Tip Local:</strong> Empresas del sector logístico e industrial en Valladolid están digitalizando sus procesos y necesitan perfiles que interpreten esos nuevos datos.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-[#2C3E50] text-white py-8 text-center">
+        <p class="text-sm opacity-70">Análisis prospectivo del mercado laboral - Valladolid. Datos sintéticos generados para visualización.</p>
+    </footer>
+
+    <script>
+        const jobsDemandados = [
+            { id: 1, title: "Operario de Producción Industrial", score: 98, desc: "Especialmente en automoción (Renault, Iveco) y agroalimentación." },
+            { id: 2, title: "Desarrollador de Software", score: 95, desc: "Alta demanda en consultoras y Parque Tecnológico de Boecillo." },
+            { id: 3, title: "Técnico de Mantenimiento Industrial", score: 92, desc: "Mecatrónica, electricidad y robótica para líneas de producción." },
+            { id: 4, title: "Enfermero/a", score: 89, desc: "Demanda constante en sector público (SACYL) y sanidad privada." },
+            { id: 5, title: "Especialista en Logística / Mozo", score: 85, desc: "Impulsado por el comercio electrónico y nodos de transporte." },
+            { id: 6, title: "Comercial B2B", score: 80, desc: "Ventas y desarrollo de negocio interempresarial." },
+            { id: 7, title: "Ingeniero Industrial", score: 78, desc: "Organización de la producción, calidad y mejora continua." },
+            { id: 8, title: "Personal de Hostelería", score: 75, desc: "Camareros y cocineros, alta rotación y demanda continua." },
+            { id: 9, title: "Analista de Datos", score: 72, desc: "Empresas tradicionales buscando digitalización e inteligencia de negocio." },
+            { id: 10, title: "TCAE (Aux. de Enfermería)", score: 70, desc: "Atención sociosanitaria y apoyo en hospitales." }
+        ];
+
+        const jobsPagados = [
+            { id: 1, title: "Director Médico / Especialista", salary: "70k - 100k+", desc: "Cirujanos, anestesistas y direcciones hospitalarias." },
+            { id: 2, title: "Director de Planta Industrial", salary: "65k - 90k", desc: "Responsables máximos de factorías de automoción o alimentación." },
+            { id: 3, title: "Arquitecto de Software / Cloud", salary: "50k - 75k", desc: "Diseño de infraestructuras tecnológicas complejas." },
+            { id: 4, title: "Director Financiero (CFO)", salary: "55k - 80k", desc: "Gestión estratégica del capital en medianas y grandes empresas." },
+            { id: 5, title: "Director Comercial", salary: "50k - 75k+", desc: "Con gran componente de salario variable por objetivos." },
+            { id: 6, title: "Director de Logística / Supply Chain", salary: "45k - 65k", desc: "Gestión de cadenas de suministro a nivel nacional/internacional." },
+            { id: 7, title: "Ingeniero de Ciberseguridad", salary: "40k - 65k", desc: "Protección de datos y sistemas críticos corporativos." },
+            { id: 8, title: "Científico de Datos Senior", salary: "40k - 60k", desc: "Creación de modelos predictivos y machine learning." },
+            { id: 9, title: "Ingeniero de Telecomunicaciones", salary: "38k - 55k", desc: "Despliegue de redes, IoT y sistemas de comunicación." },
+            { id: 10, title: "Abogado Especialista / Socio", salary: "40k - 80k+", desc: "Especialistas en derecho mercantil o fiscal en grandes despachos." }
+        ];
+
+        const jobsCombinados = [
+            { title: "Desarrollador / Arquitecto Software", demand: 95, salary: 85, color: "#D4A373" },
+            { title: "Especialista Ciberseguridad", demand: 82, salary: 80, color: "#2C3E50" },
+            { title: "Analista/Científico de Datos", demand: 85, salary: 75, color: "#7B8D6B" },
+            { title: "Ingeniero Industrial", demand: 88, salary: 70, color: "#A8B8D0" },
+            { title: "Director Comercial (Tech/Industria)", demand: 75, salary: 90, color: "#E07A5F" }
+        ];
+
+        function renderLists() {
+            const listDemandados = document.getElementById('lista-demandados');
+            jobsDemandados.forEach((job, index) => {
+                const li = document.createElement('li');
+                li.className = "flex items-center p-3 bg-white rounded-lg shadow-sm border border-gray-100 hover:border-[#D4A373] transition-colors";
+                li.innerHTML = `
+                    <span class="text-xl font-bold text-[#D4A373] w-8">${index + 1}.</span>
+                    <div>
+                        <h4 class="font-bold text-[#2C3E50]">${job.title}</h4>
+                        <p class="text-xs text-gray-500">${job.desc}</p>
+                    </div>
+                `;
+                listDemandados.appendChild(li);
+            });
+
+            const listPagados = document.getElementById('lista-pagados');
+            jobsPagados.forEach((job, index) => {
+                const li = document.createElement('li');
+                li.className = "flex items-center p-3 bg-white rounded-lg shadow-sm border border-gray-100 hover:border-[#2C3E50] transition-colors";
+                li.innerHTML = `
+                    <span class="text-xl font-bold text-[#2C3E50] w-8">${index + 1}.</span>
+                    <div class="flex-grow">
+                        <h4 class="font-bold text-[#2C3E50]">${job.title}</h4>
+                        <p class="text-xs text-gray-500">${job.desc}</p>
+                    </div>
+                    <span class="font-semibold text-[#D4A373] whitespace-nowrap bg-[#F9F7F3] px-2 py-1 rounded text-sm">${job.salary}</span>
+                `;
+                listPagados.appendChild(li);
+            });
+
+            const containerCombinados = document.getElementById('tarjetas-combinados');
+            jobsCombinados.forEach((job, index) => {
+                const div = document.createElement('div');
+                div.className = "bg-white p-4 rounded-xl shadow-sm border border-gray-100 text-center flex flex-col justify-between";
+                div.innerHTML = `
+                    <div class="text-2xl font-black mb-2" style="color: ${job.color}">#${index + 1}</div>
+                    <h4 class="font-bold text-sm text-[#2C3E50] mb-2 leading-tight">${job.title}</h4>
+                    <div class="mt-auto">
+                        <div class="flex justify-between text-xs text-gray-500 mt-2">
+                            <span>Demanda</span>
+                            <span class="font-bold">${job.demand}/100</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-1.5 mt-1">
+                            <div class="h-1.5 rounded-full" style="width: ${job.demand}%; background-color: ${job.color}"></div>
+                        </div>
+                    </div>
+                `;
+                containerCombinados.appendChild(div);
+            });
+        }
+
+        function initCharts() {
+            Chart.defaults.font.family = "'Inter', sans-serif";
+            Chart.defaults.color = '#64748b';
+
+            const ctxD = document.getElementById('chartDemandados').getContext('2d');
+            new Chart(ctxD, {
+                type: 'bar',
+                data: {
+                    labels: jobsDemandados.map(j => j.title.length > 16 ? j.title.substring(0, 16) + '...' : j.title),
+                    datasets: [{
+                        label: 'Índice de Demanda Relativa',
+                        data: jobsDemandados.map(j => j.score),
+                        backgroundColor: '#D4A373',
+                        borderRadius: 6,
+                        barPercentage: 0.7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                title: (ctx) => jobsDemandados[ctx[0].dataIndex].title
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, max: 100, grid: { color: '#f1f5f9' } },
+                        x: { grid: { display: false }, ticks: { maxRotation: 45, minRotation: 45 } }
+                    }
+                }
+            });
+
+            const ctxP = document.getElementById('chartPagados').getContext('2d');
+            new Chart(ctxP, {
+                type: 'bar',
+                data: {
+                    labels: jobsPagados.map(j => j.title.length > 16 ? j.title.substring(0, 16) + '...' : j.title),
+                    datasets: [{
+                        label: 'Nivel Salarial Relativo',
+                        data: [100, 90, 75, 75, 70, 60, 60, 55, 50, 45], 
+                        backgroundColor: '#2C3E50',
+                        borderRadius: 6,
+                        barPercentage: 0.7
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                title: (ctx) => jobsPagados[ctx[0].dataIndex].title,
+                                label: (ctx) => "Rango: " + jobsPagados[ctx.dataIndex].salary
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { display: false, beginAtZero: true },
+                        y: { grid: { display: false } }
+                    }
+                }
+            });
+
+            const ctxC = document.getElementById('chartCombinados').getContext('2d');
+            new Chart(ctxC, {
+                type: 'scatter',
+                data: {
+                    datasets: jobsCombinados.map(job => ({
+                        label: job.title,
+                        data: [{ x: job.demand, y: job.salary, r: 15 }],
+                        backgroundColor: job.color,
+                        borderColor: 'white',
+                        borderWidth: 2,
+                        pointRadius: 12,
+                        pointHoverRadius: 16
+                    }))
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, usePointStyle: true } },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => {
+                                    return `${ctx.dataset.label}: Demanda(${ctx.raw.x}) | Salario(${ctx.raw.y})`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { 
+                            title: { display: true, text: 'Nivel de Demanda (0-100)', font: { weight: 'bold' } },
+                            min: 60, max: 100,
+                            grid: { color: '#f1f5f9' }
+                        },
+                        y: { 
+                            title: { display: true, text: 'Nivel Salarial (0-100)', font: { weight: 'bold' } },
+                            min: 60, max: 100,
+                            grid: { color: '#f1f5f9' }
+                        }
+                    }
+                }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderLists();
+            initCharts();
+        });
+    </script>
+</body>
+</html>
